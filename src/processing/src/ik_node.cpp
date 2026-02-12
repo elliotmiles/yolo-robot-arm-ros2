@@ -9,7 +9,6 @@
 #include <geometry_msgs/msg/point.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
-#include <iostream>
 #include <vector>
 #include <array>
 #include <cmath>
@@ -71,7 +70,7 @@ public:
         // theta 1
         double alpha = atan2(coords[1], coords[0]);
         double beta = asin((L2_ * sin(theta_2)) / sqrt(coords[0]*coords[0] + coords[1]*coords[1]));
-        double theta_1 = alpha + beta;
+        theta_1 = alpha + beta;
 
         // theta 3
         theta_3 = 2*M_PI - (theta_1 + (M_PI - theta_2));
@@ -105,7 +104,7 @@ public:
     }
 
 private:
-    
+    // on receiving a message, calculate the joint angles and publish them
     void callback(const geometry_msgs::msg::Point::SharedPtr msg) {
         std::vector<double> target_pos = {msg->x, msg->y};
         auto angles = arm_.inverse_kinematics(target_pos);
@@ -121,7 +120,7 @@ private:
 
     rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr subscriber_;
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr publisher_;
-    RobotArm arm_;
+    RobotArm& arm_;
 };
 
 
@@ -130,6 +129,7 @@ private:
 
 double positive_deg(double angle) {
     double deg = angle * 180.0 / M_PI;
+    // same logic as %
     return std::fmod(deg, 360.0);
 }
 
@@ -142,18 +142,6 @@ int main(int argc, char *argv[]) {
     auto node = std::make_shared<IKnode>(arm_init);
     rclcpp::spin(node);
     rclcpp::shutdown();
-
-    //std::cout << "Input target position (x, y): ";
-    //double inpt_x, inpt_y;
-    //std::cin >> inpt_x >> inpt_y;
-    //std::vector<double> target_pos = {inpt_x, inpt_y};
-    //auto result = arm.inverse_kinematics(target_pos);
-    
-    // std::cout << "Inverse Kinematics Results:" << std::endl;
-    // std::cout << "Phi: " << positive_deg(result[0]) << " degrees" << std::endl;
-    // std::cout << "Theta 1: " << positive_deg(result[1]) << " degrees" << std::endl;
-    // std::cout << "Theta 2: " << positive_deg(result[2]) << " degrees" << std::endl;
-    // std::cout << "Theta 3: " << positive_deg(result[3]) << " degrees" << std::endl;
 
     return 0;
 }
