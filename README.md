@@ -14,4 +14,4 @@ ROS2 Diagram:
 Block Diagram:
 
 
-<img width="821" height="722" alt="block-diagram" src="https://github.com/user-attachments/assets/68018666-c3d5-4e67-afe8-eabf1515aa20" />
+<img width="821" height="722" alt="block-diagram" src="https://github.com/user-attachments/assets/ab95b59e-94a8-4c27-83a7-02792a440e05" />
