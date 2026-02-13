@@ -38,8 +38,19 @@ public:
     }
 
     double normalise_angle(double angle) {
-    return std::fmod(angle + M_PI, 2 * M_PI) - M_PI;
+        return std::fmod(angle + M_PI, 2 * M_PI) - M_PI;
     }
+
+    double wrap(double angle) {
+        // same logic as %
+        return std::fmod(angle, 2*M_PI);
+    } 
+
+    // round for rviz/telemetry purposes
+    double round_4dp(double num) {
+        return std::round(num * 10000.0) / 10000.0;
+    }
+
 
     std::array<double, 4> inverse_kinematics(std::vector<double>& target_pos) {
         double x = target_pos[0];
@@ -80,7 +91,7 @@ public:
         theta_2 = normalise_angle(theta_2);
         theta_3 = normalise_angle(theta_3);
 
-        return {phi, theta_1, M_PI - theta_2, theta_3};
+        return {round_4dp(wrap(phi)), round_4dp(wrap(theta_1)), round_4dp(wrap(M_PI - theta_2)), round_4dp(wrap(theta_3))};
     }
 
 private:
@@ -127,11 +138,7 @@ private:
 
 
 
-double positive_deg(double angle) {
-    double deg = angle * 180.0 / M_PI;
-    // same logic as %
-    return std::fmod(deg, 360.0);
-}
+
 
 int main(int argc, char *argv[]) {
     // pass in L1, L2, L3, and target z height
