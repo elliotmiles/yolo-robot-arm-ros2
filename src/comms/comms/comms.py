@@ -16,6 +16,7 @@ class Comms:
         time.sleep(2)  # Wait for the serial connection to initialize
 
     def upload(self, data):
+        # first converts all list elements to strings, then joins them into one continuous string separated by commas
         comm = ",".join(map(str, data))
         self.ser_.write(f"{comm}\n".encode())
 
@@ -45,15 +46,26 @@ class CommsNode(Node):
     def timer_callback(self):
         now_ = time.time()
 
+        # if it's been 15 second since a message was sent, and more than 10 have been received in this 5s period, then send a message
 
         if len(self.msg_list_) >= 10 and (now_ - self.last_send_time_) >= self.cooldown_: 
-
+            # take the last message in the list
             new_msg_ = self.msg_list_[-1]
-            self.comms_.upload(new_msg_.position)
+
+            # new list for positions only
+            deg_positions = []
+
+            for angle in new_msg_.position:
+                # convert to degrees & round to 4dp
+                deg_positions.append(round(np.degrees(angle), 4))
+                
+            self.comms_.upload(deg_positions)
             self.get_logger().info(f'Publishing to serial port:\n{new_msg_.name[0]}: {new_msg_.position[0]}\n{new_msg_.name[1]}: {new_msg_.position[1]}\n{new_msg_.name[2]}: {new_msg_.position[2]}\n{new_msg_.name[3]}: {new_msg_.position[3]}')
 
-            #time.sleep(15)
+            # update the last time a message was sent to now
             self.last_send_time_ = now_
+
+        # clear the list    
         self.msg_list_ = []
 
  
