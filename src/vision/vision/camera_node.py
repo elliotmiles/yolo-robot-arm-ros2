@@ -34,6 +34,7 @@ class CameraNode(Node):
         
         msg = self.bridge_.cv2_to_imgmsg(frame, encoding='bgr8')
         self.publisher_.publish(msg)
+        self.get_logger().info("Published image from camera")
 
 
 def main():
