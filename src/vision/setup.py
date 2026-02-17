@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'vision_node = vision.vision_node:main',
+            'camera_node = vision.camera_node:main',
         ],
     },
 )
