@@ -257,14 +257,64 @@ void loop() {
     Serial.print("D: ");
     Serial.println(d);
 
-    float a_steps = (a / 360.0) * motor_A_steps_rev;
-    float b_steps = (b / 360.0) * motor_B_steps_rev;
-    float c_steps = (c / 360.0) * motor_C_steps_rev;
-    float d_steps = (d / 360.0) * motor_D_steps_rev;
+
+    // The given angle for A is already relative to home  
+    float A_steps = (a / 360.0) * motor_A_steps_rev;
+
+    // The given angle for B is already relative to home (when L1 is horizontal)
+    float B_steps = (b / 360.0) * motor_B_steps_rev;
+
+    // The given angle for C is already relative to home (which is when L2 is directly inline with L1)
+    float C_steps = (c / 360.0) * motor_C_steps_rev;
+
+    // The given angle for D is 90 degrees offset from home
+    float D_steps = ((d + 90)/ 360.0) * motor_D_steps_rev;
+
 
     // Order of movement - A, D, C, B
-    // Next - get movement required from homing positions
 
+  // Directions: 
+  //
+  // A from above: positive is anticlockwise (towards lim switch) 
+  // 
+  // B from gearbox side: positive is clockwise (away from lim switch) 
+  // 
+  // C from gearbox side: positive is anticlockwise (away from lim switch) 
+  // 
+  // D from gearbox side: positive is clockwise (towards lim switch)
+
+
+    motor_A.moveTo(-(A_steps));
+    while (motor_A.distanceToGo() != 0) {
+      motor_A.run();
+    }
+
+    motor_D.moveTo(D_steps);
+    while (motor_D.distanceToGo() != 0) {
+      motor_D.run();
+    }
+
+    motor_C.moveTo(C_steps);
+    while (motor_C.distanceToGo() != 0) {
+      motor_C.run();
+    }
+
+    motor_B.moveTo(-(B_steps));
+    while (motor_B.distanceToGo() != 0) {
+      motor_B.run();
+    }
+
+    delay(500);
+
+    pickup();
+
+    // move to dropoff spot
+    motor_A.moveTo(- (0.25 * A_quarterTurn));
+    while (motor_A.distanceToGo() != 0) {
+      motor_A.run();
+    }  
+
+    drop();
   }
 
 }
