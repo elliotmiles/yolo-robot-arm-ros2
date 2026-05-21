@@ -1,4 +1,4 @@
-# autodealer
+# AutoDealer
 
 This is the updated version of my robot arm project that uses ROS2. It sorts playing cards by suit, and the end goal is to have it act as an automatic dealer for a variety of games such as blackjack! This is especially useful in scenarios where you want to play card games with friends but nobody wants to be the dealer. 
 
